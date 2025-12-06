@@ -2,16 +2,20 @@ const esbuild = require('esbuild');
 const path = require('path');
 const fs = require('fs');
 
+// Determine if running from src directory (Vercel) or root
+const isVercel = __dirname.endsWith('src') || fs.existsSync(path.join(__dirname, 'index.tsx'));
+const rootDir = isVercel ? __dirname : path.join(__dirname, 'src');
+const publicDir = isVercel ? path.join(__dirname, '..', 'public') : path.join(__dirname, 'public');
+
 // Ensure public directory exists
-const publicDir = path.join(__dirname, 'public');
 if (!fs.existsSync(publicDir)) {
     fs.mkdirSync(publicDir, { recursive: true });
 }
 
 esbuild.build({
-    entryPoints: [path.join(__dirname, 'src', 'index.tsx')],
+    entryPoints: [path.join(rootDir, 'index.tsx')],
     bundle: true,
-    outfile: path.join(__dirname, 'public', 'app.js'),
+    outfile: path.join(publicDir, 'app.js'),
     platform: 'browser',
     target: ['es2020'],
     loader: {
@@ -28,7 +32,7 @@ esbuild.build({
     console.log('✓ React web app bundled successfully');
     
     // Copy CSS to public
-    const cssPath = path.join(__dirname, 'src', 'App.css');
+    const cssPath = path.join(rootDir, 'App.css');
     const cssDestPath = path.join(publicDir, 'app.css');
     if (fs.existsSync(cssPath)) {
         fs.copyFileSync(cssPath, cssDestPath);
