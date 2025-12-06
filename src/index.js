@@ -2,15 +2,17 @@ if (require('electron-squirrel-startup')) {
     process.exit(0);
 }
 
-const { app, BrowserWindow, shell, ipcMain } = require('electron');
+const { app, BrowserWindow, shell, ipcMain, globalShortcut } = require('electron');
 const { createWindow, updateGlobalShortcuts } = require('./utils/window');
 const { setupGeminiIpcHandlers, stopMacOSAudioCapture, sendToRenderer } = require('./utils/gemini');
 const { initializeRandomProcessNames } = require('./utils/processRandomizer');
 const { applyAntiAnalysisMeasures } = require('./utils/stealthFeatures');
 const { getLocalConfig, writeConfig } = require('./config');
+const { createReactWindow } = require('./utils/reactWindow');
 
 const geminiSessionRef = { current: null };
 let mainWindow = null;
+let reactWindow = null;
 
 // Initialize random process names for stealth
 const randomNames = initializeRandomProcessNames();
@@ -27,10 +29,20 @@ app.whenReady().then(async () => {
     createMainWindow();
     setupGeminiIpcHandlers(geminiSessionRef);
     setupGeneralIpcHandlers();
+    
+    // Register global shortcut to open React UI (Cmd/Ctrl+Shift+D)
+    globalShortcut.register('CommandOrControl+Shift+D', () => {
+        if (reactWindow && !reactWindow.isDestroyed()) {
+            reactWindow.focus();
+        } else {
+            reactWindow = createReactWindow();
+        }
+    });
 });
 
 app.on('window-all-closed', () => {
     stopMacOSAudioCapture();
+    globalShortcut.unregisterAll();
     if (process.platform !== 'darwin') {
         app.quit();
     }
@@ -47,6 +59,16 @@ app.on('activate', () => {
 });
 
 function setupGeneralIpcHandlers() {
+    // Open React Dashboard
+    ipcMain.handle('open-react-dashboard', async () => {
+        if (reactWindow && !reactWindow.isDestroyed()) {
+            reactWindow.focus();
+        } else {
+            reactWindow = createReactWindow();
+        }
+        return { success: true };
+    });
+
     // Config-related IPC handlers
     ipcMain.handle('set-onboarded', async (event) => {
         try {
