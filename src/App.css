@@ -122,3 +122,69 @@ input, textarea {
         opacity: 0.5;
     }
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    body {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    
+    /* Hide scrollbar on mobile for cleaner look */
+    ::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    /* Reduce spacing on mobile */
+    :root {
+        --spacing-sm: 0.375rem;
+        --spacing-md: 0.75rem;
+        --spacing-lg: 1rem;
+        --spacing-xl: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Further reduce spacing on small phones */
+    :root {
+        --spacing-sm: 0.25rem;
+        --spacing-md: 0.5rem;
+        --spacing-lg: 0.75rem;
+        --spacing-xl: 1rem;
+    }
+}
+
+/* Tablet Responsive */
+@media (min-width: 769px) and (max-width: 1024px) {
+    :root {
+        --spacing-md: 0.875rem;
+        --spacing-lg: 1.25rem;
+    }
+}
+
+/* Utility Classes for Responsive Design */
+.mobile-only {
+    display: none;
+}
+
+.desktop-only {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .mobile-only {
+        display: block;
+    }
+    
+    .desktop-only {
+        display: none;
+    }
+}
+
+/* Touch-friendly sizes for mobile */
+@media (max-width: 768px) {
+    button, a, [role="button"] {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}

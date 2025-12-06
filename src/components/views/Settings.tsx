@@ -8,6 +8,7 @@ interface SettingsProps {
 /**
  * Settings View
  * Configure application preferences and API settings
+ * Mobile responsive with stacked layout
  */
 function Settings({ isConnected }: SettingsProps): React.ReactElement {
     const [activeTab, setActiveTab] = useState<string>('general');
@@ -15,9 +16,16 @@ function Settings({ isConnected }: SettingsProps): React.ReactElement {
     const [theme, setTheme] = useState<string>('dark');
     const [notifications, setNotifications] = useState<boolean>(true);
     const [autoSave, setAutoSave] = useState<boolean>(true);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    React.useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const containerStyle: React.CSSProperties = {
-        padding: '2rem',
+        padding: isMobile ? '1rem' : '2rem',
         maxWidth: '1200px',
         margin: '0 auto'
     };
@@ -41,23 +49,26 @@ function Settings({ isConnected }: SettingsProps): React.ReactElement {
 
     const tabsStyle: React.CSSProperties = {
         display: 'flex',
-        gap: '1rem',
-        marginBottom: '2rem',
+        gap: isMobile ? '0.5rem' : '1rem',
+        marginBottom: isMobile ? '1rem' : '2rem',
         borderBottom: '2px solid var(--border-subtle)',
-        paddingBottom: '0'
+        paddingBottom: '0',
+        flexWrap: 'wrap',
+        overflowX: isMobile ? 'auto' : 'visible'
     };
 
     const tabButtonStyle = (isActive: boolean): React.CSSProperties => ({
-        padding: '1rem 1.5rem',
+        padding: isMobile ? '0.75rem 1rem' : '1rem 1.5rem',
         background: 'transparent',
         color: isActive ? 'var(--accent-blue)' : 'var(--text-secondary)',
         border: 'none',
         borderBottom: `3px solid ${isActive ? 'var(--accent-blue)' : 'transparent'}`,
-        fontSize: '0.938rem',
+        fontSize: isMobile ? '0.875rem' : '0.938rem',
         fontWeight: isActive ? '600' : '500',
         cursor: 'pointer',
         transition: 'var(--transition-fast)',
-        marginBottom: '-2px'
+        marginBottom: '-2px',
+        whiteSpace: 'nowrap'
     });
 
     const sectionStyle: React.CSSProperties = {
@@ -80,10 +91,12 @@ function Settings({ isConnected }: SettingsProps): React.ReactElement {
 
     const settingRowStyle: React.CSSProperties = {
         display: 'flex',
+        flexDirection: isMobile ? 'column' : 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '1.5rem 0',
-        borderBottom: '1px solid var(--border-subtle)'
+        alignItems: isMobile ? 'flex-start' : 'center',
+        padding: isMobile ? '1rem 0' : '1.5rem 0',
+        borderBottom: '1px solid var(--border-subtle)',
+        gap: isMobile ? '1rem' : '0'
     };
 
     const settingInfoStyle: React.CSSProperties = {
@@ -91,7 +104,7 @@ function Settings({ isConnected }: SettingsProps): React.ReactElement {
     };
 
     const settingLabelStyle: React.CSSProperties = {
-        fontSize: '1rem',
+        fontSize: isMobile ? '0.938rem' : '1rem',
         fontWeight: '600',
         color: 'var(--text-primary)',
         marginBottom: '0.25rem'
@@ -110,7 +123,8 @@ function Settings({ isConnected }: SettingsProps): React.ReactElement {
         borderRadius: 'var(--radius-md)',
         color: 'var(--text-primary)',
         fontSize: '0.938rem',
-        minWidth: '300px'
+        minWidth: isMobile ? '100%' : '300px',
+        width: isMobile ? '100%' : 'auto'
     };
 
     const toggleStyle = (isOn: boolean): React.CSSProperties => ({

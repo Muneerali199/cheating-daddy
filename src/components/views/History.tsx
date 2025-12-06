@@ -9,11 +9,19 @@ interface HistoryProps {
 /**
  * History View
  * Browse and search through all conversation history
+ * Mobile responsive with adjusted layout
  */
 function History({ messages }: HistoryProps): React.ReactElement {
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [filterType, setFilterType] = useState<'all' | 'user' | 'ai' | 'system'>('all');
     const [dateFilter, setDateFilter] = useState<string>('all');
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    React.useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     // Mock extended history
     const mockHistory: Message[] = [
@@ -25,7 +33,7 @@ function History({ messages }: HistoryProps): React.ReactElement {
     ];
 
     const containerStyle: React.CSSProperties = {
-        padding: '2rem',
+        padding: isMobile ? '1rem' : '2rem',
         maxWidth: '1200px',
         margin: '0 auto'
     };
@@ -84,12 +92,12 @@ function History({ messages }: HistoryProps): React.ReactElement {
 
     const timelineStyle: React.CSSProperties = {
         position: 'relative',
-        paddingLeft: '2rem'
+        paddingLeft: isMobile ? '1rem' : '2rem'
     };
 
     const timelineLineStyle: React.CSSProperties = {
         position: 'absolute',
-        left: '1rem',
+        left: isMobile ? '0.5rem' : '1rem',
         top: 0,
         bottom: 0,
         width: '2px',

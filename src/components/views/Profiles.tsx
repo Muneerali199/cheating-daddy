@@ -11,13 +11,21 @@ interface ProfilesProps {
 /**
  * Profiles View
  * Manage and customize AI assistant profiles
+ * Mobile responsive with single column on small screens
  */
 function Profiles({ profiles, selectedProfile, onSelectProfile }: ProfilesProps): React.ReactElement {
     const [view, setView] = useState<'grid' | 'list'>('grid');
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    React.useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const containerStyle: React.CSSProperties = {
-        padding: '2rem',
+        padding: isMobile ? '1rem' : '2rem',
         maxWidth: '1600px',
         margin: '0 auto'
     };
@@ -93,8 +101,8 @@ function Profiles({ profiles, selectedProfile, onSelectProfile }: ProfilesProps)
 
     const gridStyle: React.CSSProperties = {
         display: 'grid',
-        gridTemplateColumns: view === 'grid' ? 'repeat(auto-fill, minmax(320px, 1fr))' : '1fr',
-        gap: '1.5rem'
+        gridTemplateColumns: isMobile ? '1fr' : (view === 'grid' ? 'repeat(auto-fill, minmax(320px, 1fr))' : '1fr'),
+        gap: isMobile ? '1rem' : '1.5rem'
     };
 
     const profileCardStyle = (isSelected: boolean): React.CSSProperties => ({

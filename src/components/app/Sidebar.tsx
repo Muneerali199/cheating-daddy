@@ -6,28 +6,34 @@ interface MenuItem {
     icon: string;
 }
 
-import { useNavigate, useLocation } from 'react-router-dom';
-
 interface SidebarProps {
     activeView: string;
     onNavigate: (view: string) => void;
+    isMobile?: boolean;
+    isOpen?: boolean;
 }
 
 /**
  * Sidebar Component
  * Left navigation panel with logo and menu items
+ * Mobile responsive with slide-in animation
  */
-function Sidebar({ activeView, onNavigate }: SidebarProps): React.ReactElement {
-    const navigate = useNavigate();
-    const location = useLocation();
+function Sidebar({ activeView, onNavigate, isMobile = false, isOpen = false }: SidebarProps): React.ReactElement {
     const sidebarStyle: React.CSSProperties = {
-        width: '240px',
+        width: isMobile ? '280px' : '240px',
         background: 'var(--bg-secondary)',
         borderRight: '1px solid var(--border-subtle)',
         display: 'flex',
         flexDirection: 'column',
         padding: '1.5rem 1rem',
-        gap: '2rem'
+        gap: '2rem',
+        position: isMobile ? 'fixed' : 'relative',
+        left: isMobile ? (isOpen ? '0' : '-280px') : 'auto',
+        top: 0,
+        bottom: 0,
+        zIndex: 999,
+        transition: 'left 0.3s ease-out',
+        overflowY: 'auto'
     };
 
     const logoStyle: React.CSSProperties = {
@@ -61,19 +67,17 @@ function Sidebar({ activeView, onNavigate }: SidebarProps): React.ReactElement {
         { id: 'settings', label: 'Settings', icon: '◎' }
     ];
     
-    const currentPath = location.pathname.replace('/', '') || 'dashboard';
-
     const getItemStyle = (isActive: boolean): React.CSSProperties => ({
         display: 'flex',
         alignItems: 'center',
         gap: '0.75rem',
-        padding: '0.75rem 1rem',
+        padding: isMobile ? '1rem' : '0.75rem 1rem',
         borderRadius: 'var(--radius-md)',
         color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
         background: isActive ? 'var(--bg-active)' : 'transparent',
         cursor: 'pointer',
         transition: 'var(--transition-fast)',
-        fontSize: '0.9rem',
+        fontSize: isMobile ? '1rem' : '0.9rem',
         fontWeight: isActive ? '500' : '400',
         border: 'none',
         width: '100%',
@@ -81,7 +85,7 @@ function Sidebar({ activeView, onNavigate }: SidebarProps): React.ReactElement {
     });
 
     const iconStyle: React.CSSProperties = {
-        fontSize: '1rem',
+        fontSize: isMobile ? '1.25rem' : '1rem',
         opacity: 0.8
     };
 
@@ -93,15 +97,12 @@ function Sidebar({ activeView, onNavigate }: SidebarProps): React.ReactElement {
             
             <nav style={navStyle}>
                 {menuItems.map((item) => {
-                    const isActive = currentPath === item.id;
+                    const isActive = activeView === item.id;
                     return (
                         <button
                             key={item.id}
                             style={getItemStyle(isActive)}
-                            onClick={() => {
-                                onNavigate(item.id);
-                                navigate(`/${item.id}`);
-                            }}
+                            onClick={() => onNavigate(item.id)}
                             onMouseEnter={(e) => {
                                 if (!isActive) {
                                     e.currentTarget.style.background = 'var(--bg-hover)';

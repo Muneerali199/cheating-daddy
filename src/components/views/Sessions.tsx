@@ -20,9 +20,17 @@ interface SessionsProps {
 /**
  * Sessions View
  * Manage and view all AI conversation sessions
+ * Mobile responsive with stacked layout
  */
 function Sessions({ sessions: initialSessions, onCreateSession }: SessionsProps): React.ReactElement {
     const [filter, setFilter] = useState<string>('all');
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    React.useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
     
     // Mock sessions data
     const mockSessions: Session[] = [
@@ -71,7 +79,7 @@ function Sessions({ sessions: initialSessions, onCreateSession }: SessionsProps)
     const sessions = initialSessions.length > 0 ? initialSessions : mockSessions;
 
     const containerStyle: React.CSSProperties = {
-        padding: '2rem',
+        padding: isMobile ? '1rem' : '2rem',
         maxWidth: '1400px',
         margin: '0 auto'
     };
@@ -95,16 +103,17 @@ function Sessions({ sessions: initialSessions, onCreateSession }: SessionsProps)
 
     const toolbarStyle: React.CSSProperties = {
         display: 'flex',
-        gap: '1rem',
-        marginBottom: '2rem',
+        gap: isMobile ? '0.75rem' : '1rem',
+        marginBottom: isMobile ? '1rem' : '2rem',
         flexWrap: 'wrap',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: isMobile ? 'flex-start' : 'space-between'
     };
 
     const filterGroupStyle: React.CSSProperties = {
         display: 'flex',
-        gap: '0.5rem'
+        gap: '0.5rem',
+        flexWrap: 'wrap'
     };
 
     const filterButtonStyle = (isActive: boolean): React.CSSProperties => ({

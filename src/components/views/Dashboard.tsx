@@ -17,6 +17,7 @@ interface DashboardProps {
 /**
  * Dashboard Component
  * Main dashboard view with quick actions, session panel, and profile panel
+ * Mobile responsive with stacked layout
  */
 function Dashboard({ 
     selectedProfile, 
@@ -26,16 +27,26 @@ function Dashboard({
     onSelectProfile,
     isConnected 
 }: DashboardProps): React.ReactElement {
+    const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
+
+    React.useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const dashboardStyle: React.CSSProperties = {
         display: 'flex',
         flexDirection: 'column',
-        gap: '1.5rem',
-        height: '100%'
+        gap: isMobile ? '1rem' : '1.5rem',
+        height: '100%',
+        overflow: isMobile ? 'auto' : 'hidden'
     };
 
     const mainContentStyle: React.CSSProperties = {
         display: 'flex',
-        gap: '1.5rem',
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: isMobile ? '1rem' : '1.5rem',
         flex: 1,
         minHeight: 0
     };
@@ -44,8 +55,9 @@ function Dashboard({
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        gap: '1.5rem',
-        minWidth: 0
+        gap: isMobile ? '1rem' : '1.5rem',
+        minWidth: 0,
+        minHeight: isMobile ? '400px' : 0
     };
 
     return (
