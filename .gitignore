@@ -93,3 +93,7 @@ typings/
 out/
 .specstory
 .specstory/
+
+# Build output for web
+public/app.js
+public/app.css
