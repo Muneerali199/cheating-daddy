@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Profile, Message } from '../../App';
 import QuickActions from '../ui/QuickActions';
 import SessionPanel from '../ui/SessionPanel';
@@ -48,7 +49,13 @@ function Dashboard({
     };
 
     return (
-        <div style={dashboardStyle}>
+        <motion.div
+            style={dashboardStyle}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+        >
             <QuickActions />
             
             <div style={mainContentStyle}>
@@ -67,7 +74,7 @@ function Dashboard({
                     onSelectProfile={onSelectProfile}
                 />
             </div>
-        </div>
+        </motion.div>
     );
 }
 

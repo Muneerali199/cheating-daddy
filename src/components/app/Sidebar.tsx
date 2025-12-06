@@ -6,6 +6,8 @@ interface MenuItem {
     icon: string;
 }
 
+import { useNavigate, useLocation } from 'react-router-dom';
+
 interface SidebarProps {
     activeView: string;
     onNavigate: (view: string) => void;
@@ -16,6 +18,8 @@ interface SidebarProps {
  * Left navigation panel with logo and menu items
  */
 function Sidebar({ activeView, onNavigate }: SidebarProps): React.ReactElement {
+    const navigate = useNavigate();
+    const location = useLocation();
     const sidebarStyle: React.CSSProperties = {
         width: '240px',
         background: 'var(--bg-secondary)',
@@ -52,8 +56,12 @@ function Sidebar({ activeView, onNavigate }: SidebarProps): React.ReactElement {
         { id: 'sessions', label: 'Sessions', icon: '◉' },
         { id: 'profiles', label: 'Profiles', icon: '◈' },
         { id: 'history', label: 'History', icon: '◐' },
+        { id: 'analytics', label: 'Analytics', icon: '◓' },
+        { id: 'templates', label: 'Templates', icon: '◪' },
         { id: 'settings', label: 'Settings', icon: '◎' }
     ];
+    
+    const currentPath = location.pathname.replace('/', '') || 'dashboard';
 
     const getItemStyle = (isActive: boolean): React.CSSProperties => ({
         display: 'flex',
@@ -84,26 +92,32 @@ function Sidebar({ activeView, onNavigate }: SidebarProps): React.ReactElement {
             </div>
             
             <nav style={navStyle}>
-                {menuItems.map((item) => (
-                    <button
-                        key={item.id}
-                        style={getItemStyle(activeView === item.id)}
-                        onClick={() => onNavigate(item.id)}
-                        onMouseEnter={(e) => {
-                            if (activeView !== item.id) {
-                                e.currentTarget.style.background = 'var(--bg-hover)';
-                            }
-                        }}
-                        onMouseLeave={(e) => {
-                            if (activeView !== item.id) {
-                                e.currentTarget.style.background = 'transparent';
-                            }
-                        }}
-                    >
-                        <span style={iconStyle}>{item.icon}</span>
-                        <span>{item.label}</span>
-                    </button>
-                ))}
+                {menuItems.map((item) => {
+                    const isActive = currentPath === item.id;
+                    return (
+                        <button
+                            key={item.id}
+                            style={getItemStyle(isActive)}
+                            onClick={() => {
+                                onNavigate(item.id);
+                                navigate(`/${item.id}`);
+                            }}
+                            onMouseEnter={(e) => {
+                                if (!isActive) {
+                                    e.currentTarget.style.background = 'var(--bg-hover)';
+                                }
+                            }}
+                            onMouseLeave={(e) => {
+                                if (!isActive) {
+                                    e.currentTarget.style.background = 'transparent';
+                                }
+                            }}
+                        >
+                            <span style={iconStyle}>{item.icon}</span>
+                            <span>{item.label}</span>
+                        </button>
+                    );
+                })}
             </nav>
         </div>
     );

@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import './App.css';
 import AppShell from './components/app/AppShell';
 import Dashboard from './components/views/Dashboard';
+import Sessions from './components/views/Sessions';
+import Profiles from './components/views/Profiles';
+import History from './components/views/History';
+import Settings from './components/views/Settings';
+import Analytics from './components/views/Analytics';
+import Templates from './components/views/Templates';
 
 interface Message {
     id: number;
@@ -117,46 +125,67 @@ function App(): React.ReactElement {
     };
 
     return (
-        <AppShell
-            activeView={activeView}
-            onNavigate={setActiveView}
-            isConnected={isConnected}
-        >
-            {activeView === 'dashboard' && (
-                <Dashboard
-                    selectedProfile={selectedProfile}
-                    profiles={profiles}
-                    messages={messages}
-                    onSendMessage={handleSendMessage}
-                    onSelectProfile={handleSelectProfile}
-                    isConnected={isConnected}
-                />
-            )}
-            
-            {activeView === 'sessions' && (
-                <div style={{ padding: '2rem', color: 'var(--text-secondary)' }}>
-                    Sessions view - Coming soon
-                </div>
-            )}
-            
-            {activeView === 'profiles' && (
-                <div style={{ padding: '2rem', color: 'var(--text-secondary)' }}>
-                    Profiles view - Coming soon
-                </div>
-            )}
-            
-            {activeView === 'history' && (
-                <div style={{ padding: '2rem', color: 'var(--text-secondary)' }}>
-                    History view - Coming soon
-                </div>
-            )}
-            
-            {activeView === 'settings' && (
-                <div style={{ padding: '2rem', color: 'var(--text-secondary)' }}>
-                    Settings view - Coming soon
-                </div>
-            )}
-        </AppShell>
+        <Router>
+            <AppShell
+                activeView={activeView}
+                onNavigate={setActiveView}
+                isConnected={isConnected}
+            >
+                <AnimatePresence mode="wait">
+                    <Routes>
+                        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                        <Route
+                            path="/dashboard"
+                            element={
+                                <Dashboard
+                                    selectedProfile={selectedProfile}
+                                    profiles={profiles}
+                                    messages={messages}
+                                    onSendMessage={handleSendMessage}
+                                    onSelectProfile={handleSelectProfile}
+                                    isConnected={isConnected}
+                                />
+                            }
+                        />
+                        <Route
+                            path="/sessions"
+                            element={
+                                <Sessions
+                                    sessions={[]}
+                                    onCreateSession={() => console.log('Create session')}
+                                />
+                            }
+                        />
+                        <Route
+                            path="/profiles"
+                            element={
+                                <Profiles
+                                    profiles={profiles}
+                                    selectedProfile={selectedProfile}
+                                    onSelectProfile={handleSelectProfile}
+                                />
+                            }
+                        />
+                        <Route
+                            path="/history"
+                            element={<History messages={messages} />}
+                        />
+                        <Route
+                            path="/analytics"
+                            element={<Analytics />}
+                        />
+                        <Route
+                            path="/templates"
+                            element={<Templates />}
+                        />
+                        <Route
+                            path="/settings"
+                            element={<Settings isConnected={isConnected} />}
+                        />
+                    </Routes>
+                </AnimatePresence>
+            </AppShell>
+        </Router>
     );
 }
 
