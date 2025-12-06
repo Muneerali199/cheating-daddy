@@ -16,30 +16,33 @@ function QuickActionCard({ title, description, icon, onClick }: QuickActionCardP
 
     const cardStyle: React.CSSProperties = {
         background: 'var(--bg-card)',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid var(--border-subtle)',
-        borderRadius: 'var(--radius-lg)',
+        backdropFilter: 'blur(20px)',
+        border: isHovered ? '1px solid rgba(99, 102, 241, 0.3)' : '1px solid var(--border-subtle)',
+        borderRadius: 'var(--radius-xl)',
         padding: '1.5rem',
         display: 'flex',
         flexDirection: 'column',
         gap: '1rem',
         cursor: 'pointer',
         transition: 'var(--transition-smooth)',
-        transform: isHovered ? 'translateY(-4px) scale(1.02)' : 'translateY(0) scale(1)',
-        boxShadow: isHovered ? 'var(--shadow-lg)' : 'var(--shadow-sm)'
+        transform: isHovered ? 'translateY(-6px) scale(1.02)' : 'translateY(0) scale(1)',
+        boxShadow: isHovered ? '0 20px 40px -10px rgba(99, 102, 241, 0.3)' : 'var(--shadow-sm)',
+        position: 'relative',
+        overflow: 'hidden'
     };
 
     const iconStyle: React.CSSProperties = {
-        width: '40px',
-        height: '40px',
-        borderRadius: 'var(--radius-md)',
-        background: 'var(--accent-gradient)',
+        width: '48px',
+        height: '48px',
+        borderRadius: 'var(--radius-lg)',
+        background: isHovered ? 'var(--accent-gradient-vibrant)' : 'var(--accent-gradient)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: '1.25rem',
-        transition: 'var(--transition-fast)',
-        transform: isHovered ? 'rotate(5deg)' : 'rotate(0deg)'
+        fontSize: '1.5rem',
+        transition: 'var(--transition-smooth)',
+        transform: isHovered ? 'rotate(5deg) scale(1.1)' : 'rotate(0deg) scale(1)',
+        boxShadow: isHovered ? 'var(--shadow-glow-purple)' : 'none'
     };
 
     const titleStyle: React.CSSProperties = {

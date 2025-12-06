@@ -10,6 +10,8 @@ import History from './components/views/History';
 import Settings from './components/views/Settings';
 import Analytics from './components/views/Analytics';
 import Templates from './components/views/Templates';
+import LandingPage from './components/views/LandingPage';
+import SignInPage from './components/views/SignInPage';
 
 interface Message {
     id: number;
@@ -27,12 +29,22 @@ interface Profile {
     language: string;
 }
 
+interface User {
+    email: string;
+    name: string;
+}
+
 /**
  * Main App Component
  * Root of the Cheating Daddy React application
- * Manages global state and routing
+ * Manages global state, authentication, and routing
  */
 function App(): React.ReactElement {
+    // Authentication state
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    const [user, setUser] = useState<User | null>(null);
+    const [showSignIn, setShowSignIn] = useState<boolean>(false);
+    
     // Navigation state
     const [activeView, setActiveView] = useState<string>('dashboard');
     
@@ -86,6 +98,24 @@ function App(): React.ReactElement {
         }
     ];
 
+    // Handle authentication
+    const handleSignIn = (email: string, password: string): void => {
+        // Mock authentication - accept any email/password
+        const userName = email.split('@')[0];
+        setUser({
+            email,
+            name: userName.charAt(0).toUpperCase() + userName.slice(1)
+        });
+        setIsAuthenticated(true);
+        setShowSignIn(false);
+    };
+
+    const handleSignOut = (): void => {
+        setIsAuthenticated(false);
+        setUser(null);
+        setActiveView('dashboard');
+    };
+
     // Handle sending a message
     const handleSendMessage = (content: string): void => {
         // Add user message
@@ -123,6 +153,21 @@ function App(): React.ReactElement {
         };
         setMessages([...messages, systemMessage]);
     };
+
+    // Show landing page if not authenticated
+    if (!isAuthenticated && !showSignIn) {
+        return <LandingPage onGetStarted={() => setShowSignIn(true)} />;
+    }
+
+    // Show sign-in page
+    if (!isAuthenticated && showSignIn) {
+        return (
+            <SignInPage
+                onSignIn={handleSignIn}
+                onBackToLanding={() => setShowSignIn(false)}
+            />
+        );
+    }
 
     return (
         <Router>
