@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "buildCommand": "npm run build:renderer",
-  "outputDirectory": "dist",
+  "buildCommand": "npm run build:web",
+  "outputDirectory": "public",
   "framework": null,
   "installCommand": "npm install",
-  "devCommand": "npm start",
+  "devCommand": "npm run build:web",
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/src/react-app.html"
+      "destination": "/index.html"
     }
   ],
   "headers": [

@@ -7,6 +7,7 @@
     "scripts": {
         "start": "npm run build:renderer && electron-forge start",
         "build:renderer": "node build-renderer.js",
+        "build:web": "node build-web.js",
         "package": "npm run build:renderer && electron-forge package",
         "make": "npm run build:renderer && electron-forge make",
         "publish": "npm run build:renderer && electron-forge publish",
